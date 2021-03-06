@@ -8,13 +8,11 @@ namespace nlsr {
 
     }
     
-    void Env::startRL(uint32_t seconds)
+    /* void Env::startRL(uint32_t seconds)
     {
         std::cout<< "进入Env::startRL" <<std::endl;
-        /* m_scheduler.scheduleEvent(ndn::time::seconds(seconds),
-                            ndn::bind(&Env::step, this, 1)); */
         ns3::Simulator::Schedule(ns3::Seconds(5.0), &Env::step, this, 1);
-    }
+    } */
 
     void Env::reset()
     {

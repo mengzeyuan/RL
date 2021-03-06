@@ -30,6 +30,8 @@
 #include <unistd.h>
 #include <boost/cstdint.hpp>
 #include "ns3/nstime.h"   //ymz
+#include <Eigen/Core>
+#include <include/MiniDNN.h>
 
 #include "test-access-control.hpp"
 

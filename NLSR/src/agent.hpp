@@ -21,6 +21,8 @@ public:
         q_table_row = tmp;
     }
     void check_state_exist(const Observation& observation);
+    int choose_action(const Observation& observation);
+    void index(const vector<double>& myvec, vector<int>& index_of_maxvalue);
 
 private:
     vector<int> myaction;

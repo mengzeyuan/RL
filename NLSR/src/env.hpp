@@ -18,7 +18,7 @@ namespace nlsr{
         void step(const int &action);
         void getRewardAndObservation();
         void updateObservation();
-        void startRL(uint32_t seconds);
+        //void startRL(uint32_t seconds);
     private:
         uint32_t hello_interval;
         ConfParameter m_confParameter;

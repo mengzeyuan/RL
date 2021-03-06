@@ -49,7 +49,7 @@
 #include "security/certificate-store.hpp"
 #include "update/prefix-update-processor.hpp"
 #include "utility/name-helper.hpp"
-#include "env.hpp"
+#include "rl.hpp"
 
 #ifdef NS3_NLSR_SIM
 #include "ns3/object.h"
@@ -372,7 +372,7 @@ private:
   ndn::Face& m_nlsrFace;
   ndn::Scheduler& m_scheduler;
   ConfParameter m_confParam;
-  Env m_env;
+  RL m_rl;
   AdjacencyList m_adjacencyList;
   NamePrefixList m_namePrefixList;
   SequencingManager m_sequencingManager;
