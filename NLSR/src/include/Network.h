@@ -89,6 +89,39 @@ class Network
             }
         }
 
+    public:
+        // Let each layer compute its output //ymz
+        void forward(const Matrix& input, Matrix& output)
+        {
+            const int nlayer = num_layers();
+
+            if (nlayer <= 0)
+            {
+                return;
+            }
+
+            // First layer
+            if (input.rows() != m_layers[0]->in_size())
+            {
+                throw std::invalid_argument("[class Network]: Input data have incorrect dimension");
+            }
+
+            m_layers[0]->forward(input);
+
+            // The following layers
+            for (int i = 1; i < nlayer; i++)
+            {
+                m_layers[i]->forward(m_layers[i - 1]->output());
+            }
+            //打印看一下输出（a）
+            /*for (int i = 0; i < nlayer; i++)
+            {
+                std::cout<<m_layers[i]->output()<<std::endl;
+                std::cout<<" "<<std::endl;
+            }*/
+            output = m_layers[nlayer-1]->output();
+        }
+
         // Let each layer compute its gradients of the parameters
         // target has two versions: Matrix and RowVectorXi
         // The RowVectorXi version is used in classification problems where each
@@ -146,6 +179,7 @@ class Network
             }
         }
 
+    private:
         // Get the meta information of the network, used to export the NN model
         MetaInfo get_meta_info() const
         {
@@ -514,6 +548,27 @@ class Network
             bool created = internal::create_directory(folder);
             if (!created)
                 throw std::runtime_error("[class Network]: Folder creation failed");
+
+            MetaInfo map = this->get_meta_info();
+            internal::write_map(folder + "/" + filename, map);
+            std::vector< std::vector<Scalar> > params = this->get_parameters();
+            internal::write_parameters(folder, filename, params);
+        }
+
+        ///
+        /// Export the network to files.
+        ///
+        /// \param folder   The folder where the network is saved.
+        /// \param fileName The filename for the network.
+        ///
+        void export_net(const std::string& folder, const std::string& filename, bool& is_folder_created) const
+        {
+            if(!is_folder_created){
+                bool created = internal::create_directory(folder);
+                if (!created)
+                    throw std::runtime_error("[class Network]: Folder creation failed");
+                is_folder_created = 1;
+            }
 
             MetaInfo map = this->get_meta_info();
             internal::write_map(folder + "/" + filename, map);

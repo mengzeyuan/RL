@@ -119,13 +119,16 @@ main (int argc, char *argv[])
   // Calculate and install FIBs
   // ndn::GlobalRoutingHelper::CalculateAllPossibleRoutes();
 
-  // 节点1 DOWN:40s UP:50s
-  Simulator::Schedule(Seconds(40.0), ndn::LinkControlHelper::FailLink, nodes.Get(0), nodes.Get(3));
-  Simulator::Schedule(Seconds(80.0), ndn::LinkControlHelper::UpLink, nodes.Get(0), nodes.Get(3));
-  Simulator::Schedule(Seconds(40.0), ndn::LinkControlHelper::FailLink, nodes.Get(0), nodes.Get(3));
-  Simulator::Schedule(Seconds(80.0), ndn::LinkControlHelper::UpLink, nodes.Get(0), nodes.Get(3));
+  // 循环设置链路up、down
+  for(int i=0; i<20000; ++i) {
+    if(i%50 == 0) {
+      Simulator::Schedule(Seconds((double)i), ndn::LinkControlHelper::FailLink, nodes.Get(0), nodes.Get(3));
+      Simulator::Schedule(Seconds((double)(i+30)), ndn::LinkControlHelper::UpLink, nodes.Get(0), nodes.Get(3));
+    }
+  }
 
-  Simulator::Stop (Seconds (200.0));
+  //Simulator::Stop (Seconds (20000.0));
+  Simulator::Stop (Hours(2.0));
 
   //ndn::L3RateTracer::InstallAll ((prefix + "-nlsr-l3-rate-trace.txt"), Seconds (1));
   ndn::L3RateTracer::InstallAll (("my-nlsr-l3-rate-trace.txt"), Seconds (10));   //OK

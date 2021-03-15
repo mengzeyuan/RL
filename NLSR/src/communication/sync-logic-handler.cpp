@@ -252,7 +252,7 @@ SyncLogicHandler::processUpdateFromSync(const SyncUpdate& update)
 
       if (isLsaNew(originRouter, AdjLsa::TYPE_STRING, update.getAdjLsaSeqNo())) {
         //cout<<ns3::Simulator::Now()<<endl;
-        _LOG_DEBUG_TIME(ns3::Simulator::Now().GetSeconds());
+        //_LOG_DEBUG_TIME(ns3::Simulator::Now().GetSeconds());
         //_LOG_DEBUG_YMZ("Received sync update with higher Adj LSA sequence number than entry in LSDB");
         if (m_confParam.getHyperbolicState() == HYPERBOLIC_STATE_ON) {
           if (update.getAdjLsaSeqNo() != 0) {
@@ -315,7 +315,7 @@ SyncLogicHandler::expressInterestForLsa(const SyncUpdate& update, std::string ls
   interest.append(lsaType);
   interest.appendNumber(seqNo);
 
-  _LOG_DEBUG_YMZ("express Interest For Lsa: " << lsaType);
+  //_LOG_DEBUG_YMZ("express Interest For Lsa: " << lsaType);
   m_lsdb.expressInterest(interest, 0);
 }
 

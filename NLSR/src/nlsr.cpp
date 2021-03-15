@@ -173,7 +173,6 @@ Nlsr::setInfoInterestFilter()
 {
   ndn::Name name(m_confParam.getRouterPrefix());
   _LOG_DEBUG("Setting interest filter for name: " << name);
-  //cout << "Setting info interest filter for name: " << name.toUri() << endl;
   getNlsrFace().setInterestFilter(name,
                                   std::bind(&HelloProtocol::processInterest,
                                             &m_helloProtocol, _1, _2),
@@ -190,7 +189,6 @@ Nlsr::setLsaInterestFilter()
   name.append(m_confParam.getSiteName());
   name.append(m_confParam.getRouterName());
   _LOG_DEBUG("Setting interest filter for name: " << name);
-  //cout << "Setting lsa interest filter for name: " << name.toUri() << endl;
   getNlsrFace().setInterestFilter(name,
                                   std::bind(&Lsdb::processInterest,
                                             &m_nlsrLsdb, _1, _2),
@@ -203,15 +201,14 @@ Nlsr::setLsaInterestFilter()
 void
 Nlsr::setStrategies()
 {
-  const std::string strategy1("ndn:/localhost/nfd/strategy/multicast");  //original
-  const std::string strategy2("ndn:/localhost/nfd/strategy/ncc");
+  const std::string strategy("ndn:/localhost/nfd/strategy/multicast");
 
   ndn::Name broadcastKeyPrefix = DEFAULT_BROADCAST_PREFIX;
   broadcastKeyPrefix.append("KEYS");
 
-  m_fib.setStrategy(m_confParam.getLsaPrefix(), strategy2, 0);
-  m_fib.setStrategy(broadcastKeyPrefix, strategy1, 0);
-  m_fib.setStrategy(m_confParam.getChronosyncPrefix(), strategy1, 0);
+  m_fib.setStrategy(m_confParam.getLsaPrefix(), strategy, 0);
+  m_fib.setStrategy(broadcastKeyPrefix, strategy, 0);
+  m_fib.setStrategy(m_confParam.getChronosyncPrefix(), strategy, 0);
 }
 
 void
@@ -296,6 +293,7 @@ Nlsr::initialize()
       it->setLinkCost(0);
     }
   }
+  m_rl.startRL(10);
 }
 
 void
@@ -470,4 +468,4 @@ Nlsr::startEventLoop()
   m_nlsrFace.processEvents();
 }
 
-} // namespace nlsr
+} // namespace nlsryyy

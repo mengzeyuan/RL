@@ -107,11 +107,11 @@ main(int argc, char* argv[])
   ndn::GlobalRoutingHelper::CalculateAllPossibleRoutes();
 
   Simulator::Schedule(Seconds(30.0), ndn::LinkControlHelper::FailLink, nodes.Get(0), nodes.Get(1));
-  Simulator::Schedule(Seconds(50.0), ndn::LinkControlHelper::UpLink, nodes.Get(0), nodes.Get(1));
-  Simulator::Schedule(Seconds(30.0), ndn::LinkControlHelper::FailLink, nodes.Get(2), nodes.Get(1));
-  Simulator::Schedule(Seconds(50.0), ndn::LinkControlHelper::UpLink, nodes.Get(2), nodes.Get(1));
+  Simulator::Schedule(Seconds(70.0), ndn::LinkControlHelper::UpLink, nodes.Get(0), nodes.Get(1));
+  Simulator::Schedule(Seconds(30.0), ndn::LinkControlHelper::FailLink, nodes.Get(0), nodes.Get(3));
+  Simulator::Schedule(Seconds(70.0), ndn::LinkControlHelper::UpLink, nodes.Get(0), nodes.Get(3));
 
-  Simulator::Stop(Seconds(80.0));
+  Simulator::Stop(Seconds(90.0));
 
   Simulator::Run();
   Simulator::Destroy();

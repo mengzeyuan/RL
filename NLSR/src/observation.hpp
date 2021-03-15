@@ -10,7 +10,7 @@ using namespace std;
 
 namespace nlsr{
 
-class Observation {  //坐标（x，y）
+class Observation {  //状态（x，y，z）
 public:
     Observation(double x, double y, double z):my_x(x),my_y(y),my_z(z){
 
