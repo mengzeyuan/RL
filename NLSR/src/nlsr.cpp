@@ -65,7 +65,7 @@ Nlsr::Nlsr(boost::asio::io_service& ioService, ndn::Scheduler& scheduler, ndn::F
   : m_nlsrFace(face)
   , m_scheduler(scheduler)
   , m_confParam()
-  , m_rl(m_confParam, scheduler)
+  , m_rl(m_confParam)
   , m_adjacencyList()
   , m_namePrefixList()
   , m_sequencingManager()
@@ -293,7 +293,7 @@ Nlsr::initialize()
       it->setLinkCost(0);
     }
   }
-  m_rl.startRL(10);
+  m_rl.startRL(10, m_confParam.getRouterPrefix());
 }
 
 void

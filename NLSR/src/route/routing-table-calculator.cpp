@@ -219,7 +219,7 @@ LinkStateRoutingTableCalculator::calculatePath(Map& pMap,
   allocateParent();
   allocateDistance();
   if (pnlsr.getConfParameter().getMaxFacesPerPrefix() == 1) {
-    _LOG_DEBUG_YMZ("calculate single path");
+    //_LOG_DEBUG_YMZ("calculate single path");
     // Single Path
     doDijkstraPathCalculation(sourceRouter);
     // update routing table
@@ -231,7 +231,7 @@ LinkStateRoutingTableCalculator::calculatePath(Map& pMap,
 #endif
   }
   else {
-    _LOG_DEBUG_YMZ("calculate multiple path");
+    //_LOG_DEBUG_YMZ("calculate multiple path");
     // Multi Path
     setNoLink(getNumOfLinkfromAdjMatrix(sourceRouter));
     allocateLinks();

@@ -84,26 +84,16 @@ HelloProtocol::sendScheduledInterest(uint32_t seconds) //发送第一个hello之
                        (*it).getLinkCost(), ndn::time::milliseconds::max());
     }
   }
-  //scheduleInterest(m_nlsr.getConfParameter().getInfoInterestInterval());   //original
-  scheduleInterest_ymz(m_nlsr.getConfParameter().getInfoInterestInterval());
+  scheduleInterest(m_nlsr.getConfParameter().getInfoInterestInterval());   //original
+  //scheduleInterest_ymz(m_nlsr.getConfParameter().getInfoInterestInterval());
 }
 
-void HelloProtocol::scheduleInterest_ymz(uint32_t infoInterestInterval)
+/* void HelloProtocol::scheduleInterest_ymz(uint32_t infoInterestInterval)
 {
-  cout << ns3::ndn::Consumer::numTimeOutInterests << "/" << ns3::ndn::Consumer::numOutInterests << endl;
-  /* if ((double)ns3::ndn::Consumer::numInData/ns3::ndn::Consumer::numOutInterests < 0.5)
-  {
-    if(infoInterestInterval > 5) {
-      infoInterestInterval--;
-    }
-  }
-  if ((double)ns3::ndn::Consumer::numInData/ns3::ndn::Consumer::numOutInterests > 0.9)
-  {
-    infoInterestInterval++;
-  } */
+  //cout << ns3::ndn::Consumer::numTimeOutInterests << "/" << ns3::ndn::Consumer::numOutInterests << endl;
   m_nlsr.getConfParameter().setInfoInterestInterval(infoInterestInterval);
   scheduleInterest(m_nlsr.getConfParameter().getInfoInterestInterval());
-}
+} */
 
 void
 HelloProtocol::scheduleInterest(uint32_t seconds)

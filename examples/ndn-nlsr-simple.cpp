@@ -128,7 +128,7 @@ main (int argc, char *argv[])
   }
 
   //Simulator::Stop (Seconds (20000.0));
-  Simulator::Stop (Hours(2.0));
+  Simulator::Stop (Hours(5.0));
 
   //ndn::L3RateTracer::InstallAll ((prefix + "-nlsr-l3-rate-trace.txt"), Seconds (1));
   ndn::L3RateTracer::InstallAll (("my-nlsr-l3-rate-trace.txt"), Seconds (10));   //OK

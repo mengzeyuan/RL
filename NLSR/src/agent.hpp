@@ -5,18 +5,14 @@
 #include <vector>
 #include <algorithm>
 #include <time.h>
-#include <float.h>
-#include <include/MiniDNN.h>
-
+#include <fstream>
+#include <boost/algorithm/string.hpp>
+#include "NeuralNet.cpp"
 using namespace std;
-using namespace MiniDNN;
-//在Eigen中:typedef Matrix<double, Dynamic, Dynamic> MatrixXd;
-typedef Eigen::MatrixXd Matrix;
-typedef Eigen::VectorXd Vector;
 
 namespace nlsr{
 
-class ReplayMemory {
+/* class ReplayMemory {
 private:
     vector<vector<vector<double>>> mem;
     int capacity;
@@ -58,31 +54,111 @@ public:
         this->next_state = mem_read[3];
         this->is_done = (bool)mem_read[4][0];
     }
+}; */
+
+class ReplayMemory {
+private:
+    int capacity;
+    std::ofstream outfile;
+    string router_name;
+
+public:
+    vector<double> current_state;
+    int action;
+    int reward;
+    vector<double> next_state;
+    bool is_done;
+    ReplayMemory () {}
+    void initialize (int capacity, const string& routerName) {
+        this->router_name = routerName;
+        this->capacity = capacity;
+        srand(time(NULL));
+        //cout<<routerName.toUri()<<endl;   // /n/e/%C1r0
+        this->outfile.open("node"+router_name.substr(9,router_name.size())+"_mem.txt");
+        if (this->outfile.is_open())
+        {std::cout <<"node"+router_name.substr(9,router_name.size())+"_mem.txt"<<"被创建" << std::endl;}
+    }
+    ~ReplayMemory () {
+        this->outfile.close();
+    }
+    void store (vector<double> current_state,
+        int action,
+        int reward,
+        vector<double> next_state,
+        bool is_done) {
+            //of_hello << Simulator::Now().ToDouble(Time::S) << "\t" << nodeName << "\t" << arg1 << "\t" << arg2 << "\t" << arg3 << "\t" << arg4 << "\t" << arg5 << "\t" << arg6 << endl; 
+            this->outfile << current_state[0] << " " << current_state[1] << " " << action << " " << reward << " " << next_state[0] << " " << next_state[1] << " " << is_done << endl;
+    }
+    string read_line(string filename,int line)
+    {
+        int i=0;
+        string temp;
+        fstream file;
+        file.open(filename,ios::in);
+        if(line<=0)
+        {
+            return "Error 1: 行数错误，不能为0或负数";
+        }
+        if(file.fail())
+        {
+            return "Error 2: 文件不存在";
+        }
+        while(getline(file,temp)&&i<line-1)
+        {
+            i++;
+        }
+        file.close();
+        return temp;
+    }
+    void random () {
+        string temp = read_line("node"+router_name.substr(9,router_name.size())+"_mem.txt",1);
+        cout<<temp<<endl;
+        vector<string> fields;
+        boost::split(fields, temp, boost::is_any_of(" "));
+        current_state.clear();
+        next_state.clear();
+        this->current_state.push_back(std::stod(fields[0]));
+        this->current_state.push_back(std::stod(fields[1]));
+        this->action = std::stoi(fields[2]);
+        this->reward = std::stoi(fields[3]);
+        this->next_state.push_back(std::stod(fields[4]));
+        this->next_state.push_back(std::stod(fields[5]));
+        this->is_done = (bool)std::stoi(fields[6]);
+    }
+    
 };
 
 class Agent
 {
 public:
     int frames = 0;
+    vector<double> last_prediction;
     Agent() {
 
     }
-    Agent(const vector<int>& layout, const double& lr, const int& mem_capacity, const int& frameReachProb, const int& targetFreqUpdate, const int& batches);
-    void transform(const vector<double>& myvec, Matrix& x);
-    int max_index(const Matrix& matrix);
-    int choose_action(const vector<double>& input);
-    void store_mem(const vector<double>& current_state, const int& action, const int& reward, const vector<double>& next_state, const bool& is_done);
-    double max_value(const Matrix& matrix);
-    void train();
+    Agent (vector<int> layout, double lr, int mem_capacity, int frameReachProb, int targetFreqUpdate, int batches)
+    :frameReachProb(frameReachProb), targetFreqUpdate(targetFreqUpdate), batches(batches)
+    {
+        this->net = NeuralNetwork(layout, lr);
+        this->target_net = net;
+        srand(time(NULL));
+    }
+    //求最大值下标
+    int argmax (vector<double> array);
+    int choose_action (vector<double> input);
+    void store_mem (vector<double> current_state, int action, int reward, vector<double> next_state, bool is_done);
+    double max (vector<double> array);
+    void train ();
+    void initialize_mem (const string& router_name);
 
 private:
-    Network net, target_net;
-    Adam opt;
+    NeuralNetwork net = NeuralNetwork();
+    NeuralNetwork target_net = NeuralNetwork();
     ReplayMemory mem;
     int frameReachProb;
     int batches;
     int targetFreqUpdate;
-    bool is_folder_created = 1;
+    //bool is_folder_created = 1;
 };
 
 }

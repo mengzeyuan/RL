@@ -62,8 +62,8 @@ public:
   void
   scheduleInterest(uint32_t seconds);
 
-  void 
-  scheduleInterest_ymz(uint32_t seconds);
+  /* void 
+  scheduleInterest_ymz(uint32_t seconds); */
 
   void
   expressInterest(const ndn::Name& interestNamePrefix, uint32_t seconds);

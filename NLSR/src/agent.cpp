@@ -2,113 +2,78 @@
 
 namespace nlsr{
 
-Agent::Agent(const vector<int>& layout, const double& lr, const int& mem_capacity, const int& frameReachProb, const int& targetFreqUpdate, const int& batches)
-:frameReachProb(frameReachProb), batches(batches), targetFreqUpdate(targetFreqUpdate)
-{
-    Layer* layer1 = new FullyConnected<ReLU>(layout[0], layout[1]);
-    Layer* layer2 = new FullyConnected<ReLU>(layout[1], layout[2]);
-    Layer* layer3 = new FullyConnected<Identity>(layout[2], layout[3]);
-    net.add_layer(layer1);
-    net.add_layer(layer2);
-    net.add_layer(layer3);
-    net.set_output(new RegressionMSE());
-    opt.m_lrate = lr;
-    net.init(0, 0.01, 000);
-    net.export_net("./NetFolder/", "NetFile_init", is_folder_created);
-    target_net.read_net("./NetFolder/", "NetFile_init");
-    this->mem = ReplayMemory(mem_capacity);
-    srand(time(NULL));
-}
-
-void Agent::transform(const vector<double>& myvec, Matrix& x) {
-    for(unsigned int i=0; i<myvec.size(); ++i) {
-        x(i,0) = myvec[i];
-    }
-}
-
-int Agent::max_index(const Matrix& matrix) {
-    double max = DBL_MIN;
-    int index;
-    for(unsigned int i=0; i<matrix.rows(); ++i) {
-        if(matrix(i,0)>max){
-            max = matrix(i,0);
-            index = i;
+    //求最大值下标
+    int Agent::argmax (vector<double> array) {
+        int index = 0;
+        double max_value = array[0];
+        for (unsigned int i = 1; i < array.size(); ++i) {
+            if (array[i] > max_value) {
+                max_value = array[i];
+                index = i;
+            }
         }
+        return index; 
     }
-    return index;
-}
-
-int Agent::choose_action(const vector<double>& input) {
-    this->frames++;
-    double probability;
-    if (frames <= frameReachProb) {
-        probability = (-0.9 / double(frameReachProb)) * frames + 1;
-    } else {
-        probability = 0.1;
-    }
-    bool isRandom = (rand() % 100) < (probability * 100);
-    int action;
-    if (isRandom) {
-        action = rand() % 4;
-    }
-    else {
-        Matrix input_x(input.size(),1);
-        transform(input, input_x);
-        Matrix last_prediction = this->net.predict(input_x);
-        action = max_index(last_prediction);
-    }
-    return action;
-}
-
-void Agent::store_mem (const vector<double>& current_state, const int& action, const int& reward, const vector<double>& next_state, const bool& is_done) {
-    mem.store(current_state, action, reward, next_state, is_done);
-}
-
-double Agent::max_value(const Matrix& matrix) {
-    double max = DBL_MIN;
-    for(unsigned int i=0; i<matrix.rows(); ++i) {
-        if(matrix(i,0)>max){
-            max = matrix(i,0);
-        }
-    }
-    return max;
-}
-
-void Agent::train () {
-    // sample minibatch
-    for (int i = 0; i < batches; ++i) {
-        mem.random();
-        vector<double> current_state = mem.current_state;
-        Matrix current_state_matrix(2,1);
-        transform(current_state, current_state_matrix);
-        int action = mem.action;
-        int reward = mem.reward;
-        vector<double> next_state = mem.next_state;
-        Matrix next_state_matrix(2,1);
-        transform(next_state, next_state_matrix);
-        bool is_done = mem.is_done;
-        // train
-        double y;
-        if (is_done) {
-            y = reward;
+    int Agent::choose_action (vector<double> input) {
+        this->frames++;
+        double probability;
+        if (frames <= frameReachProb) {
+            probability = (-0.9 / double(frameReachProb)) * frames + 1;
         } else {
-            //y = reward + (0.99 * max(this->target_net.predict(next_state)));
-            y = reward + 0.99*max_value(target_net.predict(next_state_matrix));
+            probability = 0.1; 
         }
-        Matrix eval = this->net.predict(current_state_matrix);//eval是一个列矩阵
-        Matrix target = eval;
-        target(action,0) = y;
-        this->net.backprop(current_state_matrix, target);
-        net.update(opt);
+        bool isRandom = (rand() % 100) < (probability * 100);
+        int action;
+        if (isRandom) {
+            action = rand() % 4;
+	        last_prediction = vector<double>({-1, -1, -1, -1});
+        } else {
+	        last_prediction = this->net.predict(input);
+            action = argmax(last_prediction);
+        }
+        return action;
     }
-    if (frames % this->targetFreqUpdate == 0) {
-        static int i=0;
-        i++;
-        string fileName = "NetFile_update"+std::to_string(i);
-        net.export_net("./NetFolder/", fileName, is_folder_created);
-        target_net.read_net("./NetFolder/", fileName);
+    void Agent::store_mem (vector<double> current_state, int action, int reward, vector<double> next_state, bool is_done) {
+        mem.store(current_state, action, reward, next_state, is_done);
     }
-}
+    double Agent::max (vector<double> array) {
+        double max_val = array[0];
+        for (unsigned int i = 1; i < array.size(); ++i) {
+            if (array[i] > max_val) {
+                max_val = array[i];
+            }
+        }
+        return max_val;
+    }
+    void Agent::train () {
+        // sample minibatch
+        for (unsigned int i = 0; i < batches; ++i) {
+            mem.random(); 
+            vector<double> current_state = mem.current_state;
+            int action = mem.action;
+            int reward = mem.reward;
+            vector<double> next_state = mem.next_state; 
+            bool is_done = mem.is_done;
+            // train
+            double y;
+            if (is_done) {
+                y = reward;
+            } else {
+                y = reward + (0.99 * max(this->target_net.predict(next_state)));
+            }
+            vector<double> target = this->net.predict(current_state);
+            target[action] = y; 
+            this->net.backprop(current_state, target, true);
+        }
+        if (frames % this->targetFreqUpdate == 0) {
+            //可以用export_net和read_net代替
+            this->target_net = this->net; 
+        }
+    }
+
+    void Agent::initialize_mem(const string& router_name) {
+        mem.initialize(batches, router_name);
+    }
 
     /* Agent::Agent(){
 

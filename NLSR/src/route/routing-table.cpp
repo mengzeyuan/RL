@@ -130,7 +130,7 @@ RoutingTable::calculate(Nlsr& pnlsr)
 void
 RoutingTable::calculateLsRoutingTable(Nlsr& nlsr)
 {
-  _LOG_DEBUG_YMZ("RoutingTable::calculateLsRoutingTable Called");
+  //_LOG_DEBUG_YMZ("RoutingTable::calculateLsRoutingTable Called");
 
   Map map;
   map.createFromAdjLsdb(nlsr);
@@ -198,7 +198,7 @@ routingTableEntryCompare(RoutingTableEntry& rte, ndn::Name& destRouter)
 void
 RoutingTable:: addNextHop(const ndn::Name& destRouter, NextHop& nh)
 {
-  _LOG_DEBUG_YMZ("Adding " << nh << " for destination: " << destRouter);
+  //_LOG_DEBUG_YMZ("Adding " << nh << " for destination: " << destRouter);
 
   RoutingTableEntry* rteChk = findRoutingTableEntry(destRouter);
   if (rteChk == 0) {     //没找到对应的destRouter,即路由表中没有对应条目指向destRouter
