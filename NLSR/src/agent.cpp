@@ -3,7 +3,7 @@
 namespace nlsr{
 
     //求最大值下标
-    int Agent::argmax (vector<double> array) {
+    int Agent::argmax (const vector<double>& array) {
         int index = 0;
         double max_value = array[0];
         for (unsigned int i = 1; i < array.size(); ++i) {
@@ -14,11 +14,11 @@ namespace nlsr{
         }
         return index; 
     }
-    int Agent::choose_action (vector<double> input) {
+    int Agent::choose_action (const vector<double>& input) {
         this->frames++;
         double probability;
-        if (frames <= frameReachProb) {
-            probability = (-0.9 / double(frameReachProb)) * frames + 1;
+        if (frames <= this->frameReachProb) {
+            probability = (-0.9 / double(this->frameReachProb)) * frames + 1;
         } else {
             probability = 0.1; 
         }
@@ -26,17 +26,17 @@ namespace nlsr{
         int action;
         if (isRandom) {
             action = rand() % 4;
-	        last_prediction = vector<double>({-1, -1, -1, -1});
+	        this->last_prediction = vector<double>({-1, -1, -1, -1});
         } else {
-	        last_prediction = this->net.predict(input);
+	        this->last_prediction = this->net.predict(input);
             action = argmax(last_prediction);
         }
         return action;
     }
-    void Agent::store_mem (vector<double> current_state, int action, int reward, vector<double> next_state, bool is_done) {
+    void Agent::store_mem (const vector<double>& current_state, const int& action, const int& reward, const vector<double>& next_state, const bool& is_done) {
         mem.store(current_state, action, reward, next_state, is_done);
     }
-    double Agent::max (vector<double> array) {
+    double Agent::max (const vector<double>& array) {
         double max_val = array[0];
         for (unsigned int i = 1; i < array.size(); ++i) {
             if (array[i] > max_val) {
@@ -48,7 +48,7 @@ namespace nlsr{
     void Agent::train () {
         // sample minibatch
         for (unsigned int i = 0; i < batches; ++i) {
-            mem.random(); 
+            mem.random(this->frames); 
             vector<double> current_state = mem.current_state;
             int action = mem.action;
             int reward = mem.reward;
@@ -72,7 +72,7 @@ namespace nlsr{
     }
 
     void Agent::initialize_mem(const string& router_name) {
-        mem.initialize(batches, router_name);
+        this->mem.initialize(this->memCapacity, router_name);
     }
 
     /* Agent::Agent(){

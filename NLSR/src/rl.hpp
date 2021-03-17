@@ -10,7 +10,7 @@ namespace nlsr {
 
 class RL {
 public:
-    RL(ConfParameter& ConfParameter, int BATCHES = 32, double LR = 0.0005, int MEM_CAP = 1000000, int FRAME_REACH = 1000, int TARGET_UPDATE = 500, vector<int> layout={2, 150, 150, 4})
+    RL(ConfParameter& ConfParameter, int BATCHES = 32, double LR = 0.0005, int MEM_CAP = 1000, int FRAME_REACH = 1000, int TARGET_UPDATE = 500, vector<int> layout={2, 150, 150, 4})
     :m_env(ConfParameter), m_agent(layout, LR, MEM_CAP, FRAME_REACH, TARGET_UPDATE, BATCHES)
     {
     }

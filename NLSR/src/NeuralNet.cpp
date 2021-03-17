@@ -5,6 +5,8 @@
 #include <time.h>
 using namespace std;
 
+namespace nlsr {
+
 class Layer {
 private:
     vector<double> bias;
@@ -169,7 +171,7 @@ public:
 
     }
     NeuralNetwork (vector<int> layout, double learning_rate) {
-        for (unsigned int i = 0; i < layout.size()-1; ++i) {
+        for (int i = 0; i < layout.size()-1; ++i) {
             Layer layer_append (layout[i], layout[i+1], "Layer " + to_string(i));
             layer_append.set_learning_rate(learning_rate);
             layers.push_back(layer_append);
@@ -199,7 +201,7 @@ public:
             this->predict(x_train);
         // back propagate
         vector<double> error = y_train;
-        for (unsigned int i = this->layers.size() - 1; i > -1; i--) {
+        for (int i = this->layers.size() - 1; i > -1; i--) {
             if (i == this->layers.size() - 1) {
                 // is output
                 vector<double> new_error = this->layers[i].propagate_backward(error, true);
@@ -212,3 +214,6 @@ public:
         }
     }
 };
+
+
+}

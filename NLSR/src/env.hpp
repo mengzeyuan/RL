@@ -27,7 +27,7 @@ public:
     double total_reward;
 
 private:
-    ConfParameter m_confParameter;
+    ConfParameter conf_parameter;
     //ndn::Scheduler& m_scheduler;
     double interestHitRatio, interestTimeoutRatio;  //state
     bool is_done;

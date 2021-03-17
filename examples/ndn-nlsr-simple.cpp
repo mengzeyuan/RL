@@ -121,14 +121,14 @@ main (int argc, char *argv[])
 
   // 循环设置链路up、down
   for(int i=0; i<20000; ++i) {
-    if(i%50 == 0) {
+    if(i%100 == 0) {
       Simulator::Schedule(Seconds((double)i), ndn::LinkControlHelper::FailLink, nodes.Get(0), nodes.Get(3));
-      Simulator::Schedule(Seconds((double)(i+30)), ndn::LinkControlHelper::UpLink, nodes.Get(0), nodes.Get(3));
+      Simulator::Schedule(Seconds((double)(i+50)), ndn::LinkControlHelper::UpLink, nodes.Get(0), nodes.Get(3));
     }
   }
 
   //Simulator::Stop (Seconds (20000.0));
-  Simulator::Stop (Hours(5.0));
+  Simulator::Stop (Hours(7.0));
 
   //ndn::L3RateTracer::InstallAll ((prefix + "-nlsr-l3-rate-trace.txt"), Seconds (1));
   ndn::L3RateTracer::InstallAll (("my-nlsr-l3-rate-trace.txt"), Seconds (10));   //OK

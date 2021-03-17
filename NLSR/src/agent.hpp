@@ -69,9 +69,9 @@ public:
     vector<double> next_state;
     bool is_done;
     ReplayMemory () {}
-    void initialize (int capacity, const string& routerName) {
+    void initialize (const int& mem_capacity, const string& routerName) {
         this->router_name = routerName;
-        this->capacity = capacity;
+        this->capacity = mem_capacity;
         srand(time(NULL));
         //cout<<routerName.toUri()<<endl;   // /n/e/%C1r0
         this->outfile.open("node"+router_name.substr(9,router_name.size())+"_mem.txt");
@@ -81,15 +81,15 @@ public:
     ~ReplayMemory () {
         this->outfile.close();
     }
-    void store (vector<double> current_state,
-        int action,
-        int reward,
-        vector<double> next_state,
-        bool is_done) {
+    void store (const vector<double>& current_state,
+        const int& action,
+        const int& reward,
+        const vector<double>& next_state,
+        const bool& is_done) {
             //of_hello << Simulator::Now().ToDouble(Time::S) << "\t" << nodeName << "\t" << arg1 << "\t" << arg2 << "\t" << arg3 << "\t" << arg4 << "\t" << arg5 << "\t" << arg6 << endl; 
             this->outfile << current_state[0] << " " << current_state[1] << " " << action << " " << reward << " " << next_state[0] << " " << next_state[1] << " " << is_done << endl;
     }
-    string read_line(string filename,int line)
+    string read_line(const string& filename, const int& line)
     {
         int i=0;
         string temp;
@@ -110,13 +110,21 @@ public:
         file.close();
         return temp;
     }
-    void random () {
-        string temp = read_line("node"+router_name.substr(9,router_name.size())+"_mem.txt",1);
+    void random (const int& frames) {
+        int random;
+        //产生(a,b]的随机数，可以使用 (rand() % (b-a))+a+1;
+        if(frames <= this->capacity) {
+            random = (rand() % frames)+1;
+        }
+        else {
+            random = (rand() % this->capacity)+(frames-this->capacity)+1;
+        }
+        string temp = read_line("node" + this->router_name.substr(9, this->router_name.size()) + "_mem.txt", random);
         cout<<temp<<endl;
         vector<string> fields;
         boost::split(fields, temp, boost::is_any_of(" "));
-        current_state.clear();
-        next_state.clear();
+        this->current_state.clear();
+        this->next_state.clear();
         this->current_state.push_back(std::stod(fields[0]));
         this->current_state.push_back(std::stod(fields[1]));
         this->action = std::stoi(fields[2]);
@@ -137,17 +145,17 @@ public:
 
     }
     Agent (vector<int> layout, double lr, int mem_capacity, int frameReachProb, int targetFreqUpdate, int batches)
-    :frameReachProb(frameReachProb), targetFreqUpdate(targetFreqUpdate), batches(batches)
+    :frameReachProb(frameReachProb), batches(batches), targetFreqUpdate(targetFreqUpdate), memCapacity(mem_capacity)
     {
         this->net = NeuralNetwork(layout, lr);
         this->target_net = net;
         srand(time(NULL));
     }
     //求最大值下标
-    int argmax (vector<double> array);
-    int choose_action (vector<double> input);
-    void store_mem (vector<double> current_state, int action, int reward, vector<double> next_state, bool is_done);
-    double max (vector<double> array);
+    int argmax (const vector<double>& array);
+    int choose_action (const vector<double>& input);
+    void store_mem (const vector<double>& current_state, const int& action, const int& reward, const vector<double>& next_state, const bool& is_done);
+    double max (const vector<double>& array);
     void train ();
     void initialize_mem (const string& router_name);
 
@@ -158,6 +166,7 @@ private:
     int frameReachProb;
     int batches;
     int targetFreqUpdate;
+    int memCapacity;
     //bool is_folder_created = 1;
 };
 
