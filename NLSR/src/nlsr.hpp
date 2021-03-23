@@ -322,9 +322,6 @@ public:
     return m_firstHelloInterval;
   }
 
-  /* void
-  startRL(); */
-
 PUBLIC_WITH_TESTS_ELSE_PRIVATE:
   void
   addCertificateToCache(ndn::shared_ptr<ndn::IdentityCertificate> certificate)

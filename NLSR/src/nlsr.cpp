@@ -293,7 +293,7 @@ Nlsr::initialize()
       it->setLinkCost(0);
     }
   }
-  m_rl.startRL(10, m_confParam.getRouterPrefix());
+  m_rl.start_rl(15, m_confParam.getRouterPrefix());
 }
 
 void

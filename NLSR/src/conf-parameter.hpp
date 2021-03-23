@@ -310,7 +310,7 @@ public:
   uint32_t
   getInfoInterestInterval() const
   {
-    return m_infoInterestInterval;
+    return (uint32_t)rl_hello_interval;
   }
 
   void
@@ -416,6 +416,8 @@ public:
 
   void
   writeLog();
+
+  static double rl_hello_interval;
 
 private:
   ndn::Name m_routerName;

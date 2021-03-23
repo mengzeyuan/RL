@@ -77,6 +77,8 @@ public:
   void
   registerAdjacentPrefixes();
 
+  static int num_timeout_hello;
+
 private:
   void
   processInterestTimedOut(const ndn::Interest& interest);

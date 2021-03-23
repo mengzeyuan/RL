@@ -10,11 +10,11 @@ namespace nlsr {
 
 class RL {
 public:
-    RL(ConfParameter& ConfParameter, int BATCHES = 40, double LR = 0.0005, int MEM_CAP = 1000, int FRAME_REACH = 1000, int TARGET_UPDATE = 500, vector<int> layout={2, 150, 150, 4})
+    RL(ConfParameter& ConfParameter, int BATCHES = 40, double LR = 0.0005, int MEM_CAP = 10000, int FRAME_REACH = 1000, int TARGET_UPDATE = 500, vector<int> layout={4, 200, 200, 2})
     :m_env(ConfParameter), m_agent(layout, LR, MEM_CAP, FRAME_REACH, TARGET_UPDATE, BATCHES)
     {
     }
-    void startRL(double seconds, const ndn::Name& routerName); //设置开始时间
+    void start_rl(double seconds, const ndn::Name& routerName); //设置开始时间
     void update_1();
     void update_2(const vector<double>& current_state);
     void update_3(const int& action, const vector<double>& current_state);

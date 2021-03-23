@@ -25,8 +25,8 @@ namespace nlsr{
         bool isRandom = (rand() % 100) < (probability * 100);
         int action;
         if (isRandom) {
-            action = rand() % 4;
-	        this->last_prediction = vector<double>({-1, -1, -1, -1});
+            action = rand() % 2;
+	        this->last_prediction = vector<double>({-1, -1});
         } else {
 	        this->last_prediction = this->net.predict(input);
             action = argmax(last_prediction);
@@ -71,6 +71,7 @@ namespace nlsr{
         }
     }
 
+    //为当前节点新建txt文件，并初始化memory capacity
     void Agent::initialize_mem(const string& router_name) {
         this->mem.initialize(this->memCapacity, router_name);
     }

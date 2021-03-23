@@ -7,7 +7,7 @@
 #include <time.h>
 #include <fstream>
 #include <boost/algorithm/string.hpp>
-#include "NeuralNet.cpp"
+#include "NeuralNet.hpp"
 using namespace std;
 
 namespace nlsr{
@@ -86,8 +86,7 @@ public:
         const int& reward,
         const vector<double>& next_state,
         const bool& is_done) {
-            //of_hello << Simulator::Now().ToDouble(Time::S) << "\t" << nodeName << "\t" << arg1 << "\t" << arg2 << "\t" << arg3 << "\t" << arg4 << "\t" << arg5 << "\t" << arg6 << endl; 
-            this->outfile << current_state[0] << " " << current_state[1] << " " << action << " " << reward << " " << next_state[0] << " " << next_state[1] << " " << is_done << endl;
+            this->outfile <<current_state[0]<<" "<<current_state[1]<<" "<< current_state[2]<<" "<<current_state[3]<<" "<<action<<" "<<reward<<" "<<next_state[0]<<" "<<next_state[1]<<" "<<next_state[2]<<" "<<next_state[3]<<" "<< is_done<<endl;
     }
     string read_line(const string& filename, const int& line)
     {
@@ -110,6 +109,7 @@ public:
         file.close();
         return temp;
     }
+    //用当前frame和memory capacity确定随机取哪一行的数
     void random (const int& frames) {
         int random;
         //产生(a,b]的随机数，可以使用 (rand() % (b-a))+a+1;
@@ -127,11 +127,15 @@ public:
         this->next_state.clear();
         this->current_state.push_back(std::stod(fields[0]));
         this->current_state.push_back(std::stod(fields[1]));
-        this->action = std::stoi(fields[2]);
-        this->reward = std::stoi(fields[3]);
-        this->next_state.push_back(std::stod(fields[4]));
-        this->next_state.push_back(std::stod(fields[5]));
-        this->is_done = (bool)std::stoi(fields[6]);
+        this->current_state.push_back(std::stod(fields[2]));
+        this->current_state.push_back(std::stod(fields[3]));
+        this->action = std::stoi(fields[4]);
+        this->reward = std::stoi(fields[5]);
+        this->next_state.push_back(std::stod(fields[6]));
+        this->next_state.push_back(std::stod(fields[7]));
+        this->next_state.push_back(std::stod(fields[8]));
+        this->next_state.push_back(std::stod(fields[9]));
+        this->is_done = (bool)std::stoi(fields[10]);
     }
     
 };

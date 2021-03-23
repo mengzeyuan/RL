@@ -60,4 +60,6 @@ ConfParameter::writeLog()
   _LOG_DEBUG("Routing calculation interval:  " << m_routingCalcInterval);
 }
 
+double ConfParameter::rl_hello_interval = 20;
+
 } // namespace nlsr

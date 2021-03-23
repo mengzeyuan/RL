@@ -91,11 +91,6 @@ main (int argc, char *argv[])
   //ndn::StrategyChoiceHelper::InstallAll("/", "ndn:/localhost/nfd/strategy/best-route");
   // ncc策略测试
   ndn::StrategyChoiceHelper::InstallAll("/", "ndn:/localhost/nfd/strategy/ncc");
- 
-  //ymz
-  // Installing global routing interface on all nodes
-  // ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
-  // ndnGlobalRoutingHelper.InstallAll();
 
   // Initialize the NLSR app on nodes.
   nlsrConfReader.InitializeNlsr();
@@ -115,25 +110,22 @@ main (int argc, char *argv[])
   producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
   producerHelper.Install(nodes.Get(3)); // third node
 
-  //ymz
-  // Calculate and install FIBs
-  // ndn::GlobalRoutingHelper::CalculateAllPossibleRoutes();
-
   // 循环设置链路up、down
   for(int i=0; i<20000; ++i) {
-    if(i%100 == 0) {
+    if(i%150 == 0) {
       Simulator::Schedule(Seconds((double)i), ndn::LinkControlHelper::FailLink, nodes.Get(0), nodes.Get(3));
-      Simulator::Schedule(Seconds((double)(i+50)), ndn::LinkControlHelper::UpLink, nodes.Get(0), nodes.Get(3));
+      Simulator::Schedule(Seconds((double)(i+100)), ndn::LinkControlHelper::UpLink, nodes.Get(0), nodes.Get(3));
     }
   }
 
-  //Simulator::Stop (Seconds (20000.0));
-  Simulator::Stop (Hours(7.0));
+  //Simulator::Schedule(Seconds(20), ndn::LinkControlHelper::FailLink, nodes.Get(0), nodes.Get(3));
+
+  Simulator::Stop (Hours(24.0));
 
   //ndn::L3RateTracer::InstallAll ((prefix + "-nlsr-l3-rate-trace.txt"), Seconds (1));
-  ndn::L3RateTracer::InstallAll (("my-nlsr-l3-rate-trace.txt"), Seconds (10));   //OK
+  //ndn::L3RateTracer::InstallAll (("my-nlsr-l3-rate-trace.txt"), Seconds (10));   //OK
   //L2RateTracer::InstallAll (("my-nlsr-l2-rate-trace.txt"));     //OK（这个是看丢包情况）
-  //ndn::AppDelayTracer::InstallAll(("my-nlsr-app-delays-trace.txt"));
+  ndn::AppDelayTracer::InstallAll(("my-nlsr-app-delays-trace.txt"));   //OK
   
   Simulator::Run ();
   Simulator::Destroy ();

@@ -85,15 +85,7 @@ HelloProtocol::sendScheduledInterest(uint32_t seconds) //发送第一个hello之
     }
   }
   scheduleInterest(m_nlsr.getConfParameter().getInfoInterestInterval());   //original
-  //scheduleInterest_ymz(m_nlsr.getConfParameter().getInfoInterestInterval());
 }
-
-/* void HelloProtocol::scheduleInterest_ymz(uint32_t infoInterestInterval)
-{
-  //cout << ns3::ndn::Consumer::numTimeOutInterests << "/" << ns3::ndn::Consumer::numOutInterests << endl;
-  m_nlsr.getConfParameter().setInfoInterestInterval(infoInterestInterval);
-  scheduleInterest(m_nlsr.getConfParameter().getInfoInterestInterval());
-} */
 
 void
 HelloProtocol::scheduleInterest(uint32_t seconds)
@@ -173,6 +165,8 @@ HelloProtocol::processInterestTimedOut(const ndn::Interest& interest)
   _LOG_DEBUG("Neighbor: " << neighbor);
   m_nlsr.getAdjacencyList().incrementTimedOutInterestCount(neighbor);
 
+  //std::cout<<ns3::Simulator::Now()<<" "<<neighbor.toUri()<<", hello interest timeout"<<std::endl;
+
   Adjacent::Status status = m_nlsr.getAdjacencyList().getStatusOfNeighbor(neighbor);
 
   uint32_t infoIntTimedOutCount =
@@ -195,6 +189,7 @@ HelloProtocol::processInterestTimedOut(const ndn::Interest& interest)
 
     m_nlsr.getLsdb().scheduleAdjLsaBuild();
   }
+  num_timeout_hello++;
 }
 
 void
@@ -371,5 +366,7 @@ HelloProtocol::registerAdjacentPrefixes()
                      (*it).getLinkCost(), ndn::time::milliseconds::max());
   }
 }
+
+int HelloProtocol::num_timeout_hello = 0;
 
 } //namespace nlsr

@@ -199,8 +199,8 @@ Consumer::SendPacket()
   m_transmittedInterests(interest, this, m_face);
   m_appLink->onReceiveInterest(*interest);
 
-  numOutInterests++;
-  // std::cout<<numOutInterests<<std::endl;
+  num_out_interests++;
+  // std::cout<<num_out_interests<<std::endl;
 
   ScheduleNextPacket();
 }
@@ -238,6 +238,8 @@ Consumer::OnData(shared_ptr<const Data> data)
   SeqTimeoutsContainer::iterator entry = m_seqLastDelay.find(seq);
   if (entry != m_seqLastDelay.end()) {
     m_lastRetransmittedInterestDataDelay(this, seq, Simulator::Now() - entry->time, hopCount);
+    current_rtt = (Simulator::Now() - entry->time).GetSeconds();
+    //std::cout<<"RTT: "<<current_rtt<<std::endl;
   }
 
   entry = m_seqFullDelay.find(seq);
@@ -254,7 +256,7 @@ Consumer::OnData(shared_ptr<const Data> data)
 
   m_rtt->AckSeq(SequenceNumber32(seq));
 
-  numInData++;
+  num_in_data++;
 }
 
 void
@@ -269,7 +271,7 @@ Consumer::OnTimeout(uint32_t sequenceNumber)
                  1); // make sure to disable RTT calculation for this sample
   m_retxSeqs.insert(sequenceNumber);
 
-  numTimeOutInterests++;
+  num_time_out_interests++;
 
   ScheduleNextPacket();
 }
@@ -291,9 +293,10 @@ Consumer::WillSendOutInterest(uint32_t sequenceNumber)
   m_rtt->SentSeq(SequenceNumber32(sequenceNumber), 1);
 }
 
-int Consumer::numOutInterests = 0;
-int Consumer::numInData = 0;
-int Consumer::numTimeOutInterests = 0;
+int Consumer::num_out_interests = 0;
+int Consumer::num_in_data = 0;
+int Consumer::num_time_out_interests = 0;
+double Consumer::current_rtt = 0;
 
 } // namespace ndn
 } // namespace ns3
